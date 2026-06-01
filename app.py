@@ -5,7 +5,6 @@ import tensorflow as tf
 import plotly.graph_objects as go
 import time
 import os
-from tensorflow.keras.applications.efficientnet import preprocess_input
 
 # ─────────────────────────────────────────────
 #  KONFIGURASI HALAMAN
@@ -295,30 +294,39 @@ with st.spinner("Memuat model EfficientNetB0..."):
 if err:
     st.error(err)
     st.stop()
-
 # ─────────────────────────────────────────────
-#  UPLOAD GAMBAR
+#  INPUT GAMBAR (UPLOAD + CAMERA)
 # ─────────────────────────────────────────────
 col_up, col_result = st.columns([1, 1.4], gap="large")
 
 with col_up:
     st.markdown(
-    "<h4 style='color:white;'>📤 Upload Gambar Batik</h4>",
+    "<h4 style='color:white;'>📤 Input Gambar Batik</h4>",
     unsafe_allow_html=True
     )
-    uploaded = st.file_uploader(
-        "Pilih file gambar (JPG / PNG / WEBP)",
-        type=["jpg", "jpeg", "png", "webp"],
-        label_visibility="collapsed"
-    )
 
-    if uploaded:
-        image = Image.open(uploaded)
-        st.image(image, caption=uploaded.name)
+    # 🔥 PILIH MODE
+    mode = st.radio("Pilih Sumber:", ["Upload", "Camera"])
 
-        # Metadata gambar
-        w, h = image.size
-        st.markdown(f"""
+    image = None
+
+    # ─────────────────────────────────────────────
+    # MODE UPLOAD
+    # ─────────────────────────────────────────────
+    if mode == "Upload":
+        uploaded = st.file_uploader(
+            "Pilih file gambar (JPG / PNG / WEBP)",
+            type=["jpg", "jpeg", "png", "webp"],
+            label_visibility="collapsed"
+        )
+
+        if uploaded:
+            image = Image.open(uploaded)
+            st.image(image, caption=uploaded.name)
+
+            # Metadata gambar
+            w, h = image.size
+            st.markdown(f"""
 <div class="metric-row">
   <div class="metric-box"><div class="val">{w}</div><div class="lbl">Lebar (px)</div></div>
   <div class="metric-box"><div class="val">{h}</div><div class="lbl">Tinggi (px)</div></div>
@@ -326,11 +334,29 @@ with col_up:
 </div>
 """, unsafe_allow_html=True)
 
+    # ─────────────────────────────────────────────
+    # MODE CAMERA
+    # ─────────────────────────────────────────────
+    elif mode == "Camera":
+        camera_image = st.camera_input("Ambil gambar dari kamera")
+
+        if camera_image is not None:
+            image = Image.open(camera_image)
+            st.image(image, caption="Hasil Kamera")
+
+            # Metadata sederhana
+            w, h = image.size
+            st.markdown(f"""
+<div class="metric-row">
+  <div class="metric-box"><div class="val">{w}</div><div class="lbl">Lebar (px)</div></div>
+  <div class="metric-box"><div class="val">{h}</div><div class="lbl">Tinggi (px)</div></div>
+</div>
+""", unsafe_allow_html=True)
 # ─────────────────────────────────────────────
 #  PREDIKSI
 # ─────────────────────────────────────────────
 with col_result:
-    if uploaded is not None:
+    if image is not None:
         st.markdown("#### 🔍 Hasil Klasifikasi")
 
         with st.spinner("Menganalisis motif batik..."):
