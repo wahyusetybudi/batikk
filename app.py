@@ -5,6 +5,7 @@ import tensorflow as tf
 import plotly.graph_objects as go
 import time
 import os
+from tensorflow.keras.applications.efficientnet import preprocess_input
 
 # ─────────────────────────────────────────────
 #  KONFIGURASI HALAMAN
@@ -223,7 +224,7 @@ header { visibility: hidden; }
 # ─────────────────────────────────────────────
 @st.cache_resource(show_spinner=False)
 def load_model():
-    model_path = "model_fixed.h5"
+    model_path = "model_clean.h5"
     if not os.path.exists(model_path):
         return None, "Model tidak ditemukan. Pastikan file ada di direktori yang sama."
     model = tf.keras.models.load_model(model_path, compile=False)
@@ -237,7 +238,7 @@ IMG_SIZE = (224, 224)
 def preprocess(image: Image.Image) -> np.ndarray:
     img = image.convert("RGB").resize(IMG_SIZE)
     arr = np.array(img, dtype=np.float32)
-    arr = arr / 255.0       # raw uint8 → float
+    arr = preprocess_input(arr)
     arr = np.expand_dims(arr, axis=0)            # (1, 224, 224, 3)
     return arr
 
