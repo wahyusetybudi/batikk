@@ -1,5 +1,5 @@
 streamlit
-tensorflow
-pillow
+tensorflow-cpu==2.15.0
 numpy
+pillow
 plotly
