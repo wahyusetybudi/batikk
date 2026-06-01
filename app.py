@@ -5,6 +5,7 @@ import tensorflow as tf
 import plotly.graph_objects as go
 import time
 import os
+from tensorflow.keras.applications.efficientnet import preprocess_input
 
 # ─────────────────────────────────────────────
 #  KONFIGURASI HALAMAN
