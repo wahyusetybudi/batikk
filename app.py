@@ -328,7 +328,7 @@ with col_up:
 #  PREDIKSI
 # ─────────────────────────────────────────────
 with col_result:
-    if uploaded:
+    if uploaded is not None:
         st.markdown("#### 🔍 Hasil Klasifikasi")
 
         with st.spinner("Menganalisis motif batik..."):
@@ -373,8 +373,7 @@ with col_result:
         top5_names  = [CLASS_NAMES[i] for i in top5]
         top5_probs  = [probs[i] * 100 for i in top5]
         bar_colors  = ["#e8c98a" if i == 0 else "#3d3020" for i in range(5)]
-        text_colors = ["#0f0e0d" if i == 0 else "#9c9080"  for i in range(5)]
-
+ 
         fig = go.Figure(go.Bar(
             x          = top5_probs,
             y          = top5_names,
@@ -382,7 +381,7 @@ with col_result:
             marker_color = bar_colors,
             text       = [f"{p:.1f}%" for p in top5_probs],
             textposition = "inside",
-            textfont   = dict(size=12, color=text_colors),
+            textfont = dict(size=12),
         ))
         fig.update_layout(
             title     = dict(text="Top-5 Prediksi", font=dict(color="#9c9080", size=13)),
