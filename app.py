@@ -226,7 +226,7 @@ def load_model():
     model_path = "best_model_EfficientNetB0.keras"
     if not os.path.exists(model_path):
         return None, "Model tidak ditemukan. Pastikan file ada di direktori yang sama."
-    model = tf.keras.models.load_model(model_path)
+    model = tf.keras.models.load_model(model_path, compile=False)
     return model, None
 
 # ─────────────────────────────────────────────
