@@ -223,7 +223,7 @@ header { visibility: hidden; }
 # ─────────────────────────────────────────────
 @st.cache_resource(show_spinner=False)
 def load_model():
-    model_path = "model_clean.h5"
+    model_path = "model_fixed.h5"
     if not os.path.exists(model_path):
         return None, "Model tidak ditemukan. Pastikan file ada di direktori yang sama."
     model = tf.keras.models.load_model(model_path, compile=False)
