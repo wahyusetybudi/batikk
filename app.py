@@ -224,10 +224,19 @@ header { visibility: hidden; }
 @st.cache_resource(show_spinner=False)
 def load_model():
     model_path = "best_model_EfficientNetB0.keras"
+
     if not os.path.exists(model_path):
-        return None, "Model tidak ditemukan. Pastikan file ada di direktori yang sama."
-    model = tf.keras.models.load_model(model_path, compile=False)
-    return model, None
+        return None, "Model tidak ditemukan"
+
+    try:
+        model = tf.keras.models.load_model(
+            model_path,
+            compile=False,
+            safe_mode=False   # 🔥 PENTING
+        )
+        return model, None
+    except Exception as e:
+        return None, str(e)
 
 # ─────────────────────────────────────────────
 #  FUNGSI PREPROCESSING & PREDIKSI
