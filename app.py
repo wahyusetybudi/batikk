@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-import tflite_runtime.interpreter as tflite
+import tensorflow as tf
 import plotly.graph_objects as go
 import time
 import os
@@ -223,16 +223,11 @@ header { visibility: hidden; }
 # ─────────────────────────────────────────────
 @st.cache_resource(show_spinner=False)
 def load_model():
-    @st.cache_resource(show_spinner=False)
-    def load_model():
-        model_path = "model.tflite"
-        if not os.path.exists(model_path):
-            return None, "Model tidak ditemukan."
-
-        interpreter = tflite.Interpreter(model_path=model_path)
-        interpreter.allocate_tensors()
-
-        return interpreter, None
+    model_path = "best_model_EfficientNetB0.keras"
+    if not os.path.exists(model_path):
+        return None, "Model tidak ditemukan. Pastikan file ada di direktori yang sama."
+    model = tf.keras.models.load_model(model_path)
+    return model, None
 
 # ─────────────────────────────────────────────
 #  FUNGSI PREPROCESSING & PREDIKSI
@@ -245,18 +240,10 @@ def preprocess(image: Image.Image) -> np.ndarray:
     arr = np.expand_dims(arr, axis=0)            # (1, 224, 224, 3)
     return arr
 
-def predict(interpreter, image: Image.Image):
-    arr = preprocess(image)
-
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    interpreter.set_tensor(input_details[0]['index'], arr)
-    interpreter.invoke()
-
-    preds = interpreter.get_tensor(output_details[0]['index'])[0]
+def predict(model, image: Image.Image):
+    arr   = preprocess(image)
+    preds = model.predict(arr, verbose=0)[0]     # (20,)
     top5  = np.argsort(preds)[::-1][:5]
-
     return preds, top5
 
 # ─────────────────────────────────────────────
