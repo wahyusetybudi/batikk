@@ -223,7 +223,7 @@ header { visibility: hidden; }
 # ─────────────────────────────────────────────
 @st.cache_resource(show_spinner=False)
 def load_model():
-    model_path = "best_model_EfficientNetB0.keras"
+    model_path = "model_clean.h5"
     if not os.path.exists(model_path):
         return None, "Model tidak ditemukan. Pastikan file ada di direktori yang sama."
     model = tf.keras.models.load_model(model_path, compile=False)
@@ -236,7 +236,8 @@ IMG_SIZE = (224, 224)
 
 def preprocess(image: Image.Image) -> np.ndarray:
     img = image.convert("RGB").resize(IMG_SIZE)
-    arr = np.array(img, dtype=np.float32)       # raw uint8 → float
+    arr = np.array(img, dtype=np.float32)
+    arr = arr / 255.0       # raw uint8 → float
     arr = np.expand_dims(arr, axis=0)            # (1, 224, 224, 3)
     return arr
 
