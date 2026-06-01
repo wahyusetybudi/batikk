@@ -1,5 +1,5 @@
 streamlit
-numpy
+tensorflow
 pillow
+numpy
 plotly
-tflite-runtime
